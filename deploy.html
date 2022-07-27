@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Deploy Smart Contract</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+</head>
+<body>
+  <div>
+    <p>Wallet address - <span id="wallet-address"></span></p>
+    <div>
+      <form id="deploy-form">
+        <label>Bytecode</label>
+        <br/>
+        <input type="text" name="bytecode" id="form-bytecode" />
+        <br/>
+        <br/>
+        <label>ABI</label>
+        <br/>
+        <textarea name="abi" id="form-abi"></textarea>
+        <br/>
+        <br/>
+
+        <label>Arguments (enter the argument as arrays)</label>
+        <br/>
+        <textarea name="args" id="form-args">[]</textarea>
+        <br/>
+        <br/>
+        <button>Deploy!</button>
+        <p id="form-help-text"></p>
+      </form>
+    </div>
+  </div>
+  <script type="text/javascript">
+    // 1. Connect metamask to our site. Get the user's address
+    var account = null;
+
+    (async () => {
+      if (window.ethereum) {
+        await window.ethereum.send('eth_requestAccounts');
+        window.web3 = new Web3(window.ethereum);
+
+        var accounts = await web3.eth.getAccounts();
+        account = accounts[0];
+        document.getElementById('wallet-address').textContent = account;
+
+        initializeDeployForm();
+      }
+    })();
+
+    // 2. Deploy the bytecode!
+
+    const deploy = async (abi, bytecode, args = []) => {
+      args[4] = web3.utils.toWei(args[4], 'ether');
+      args[5] = web3.utils.toWei(args[5], 'ether');
+      var deployingContract = new web3.eth.Contract(abi).deploy({
+        data: bytecode,
+        arguments: args
+      });
+
+      var deployedContract = await deployingContract.send({
+        from: account
+      })
+
+      console.log('Address of Contract - ' + deployedContract.options.address);
+
+      return deployedContract.options.address;
+    }
+
+    const initializeDeployForm = async () => {
+      document.getElementById("deploy-form").addEventListener("submit", async (e) => {
+        e.preventDefault();    //stop form from submitting
+
+        if (account) {
+          var bytecode = document.getElementById("form-bytecode").value;
+          var abi = JSON.parse(document.getElementById("form-abi").value);
+          var args = eval(document.getElementById("form-args").value)
+
+          var address = await deploy(abi, bytecode, args);
+          document.getElementById("form-help-text").innerHTML = `Your contract was deployed at ${address}`;
+        }
+      });
+    }
+
+  </script>
+</body>
+</html>

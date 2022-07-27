@@ -1,0 +1,1 @@
+module.exports = ["0xf6BB1DAaA34588Abde00D117a6b30Ee5D32DFed4", "0x1d860a9D2eBad44Bfd4f2E6DB976C5E99F560D96", 6969, 5000, "1000000000000000000", "69000000000000000", "DDWReferralStruct(address wallet,uint256 mintPrice,uint256 tokenId)", "DDWPrivilegedStruct(address wallet)", "ipfs://bafybeiga4cq5gdoitjuisqh5lcynxe4uh7xokiljpnx4mraqurikxj2ddq/", "https://jsonkeeper.com/b/K9U0"]
